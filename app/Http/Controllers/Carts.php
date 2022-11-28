@@ -13,7 +13,10 @@ class Carts extends Controller {
    */
   public function index() {
     $user = auth()->user();
-    $cart = Cart::with(['cartItems'])->where('user_id', $user->id)->firstOrCreate(['user_id' => $user->id]);
+    $cart = Cart::with(['cartItems'])
+      ->where('user_id', $user->id)
+      ->where('checkouted', false)
+      ->firstOrCreate(['user_id' => $user->id]);
 
     return response($cart);
   }

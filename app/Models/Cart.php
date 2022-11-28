@@ -9,6 +9,7 @@ class Cart extends Model {
   use HasFactory;
 
   protected $guarded = [''];
+  private $rate = 1;
 
   public function cartItems() {
     return $this->hasMany(CartItem::class);
@@ -27,10 +28,14 @@ class Cart extends Model {
       'user_id' => $this->user_id
     ]);
 
-    foreach($this->cartItems as $cartItem) {
+    if ($this->user->level == 2) {
+      $this->rate = 0.8;
+    }
+
+    foreach ($this->cartItems as $cartItem) {
       $order->orderItems()->create([
         'product_id' => $cartItem->product_id,
-        'price' => $cartItem->product->price
+        'price' => $cartItem->product->price * $this->rate
       ]);
     }
 
