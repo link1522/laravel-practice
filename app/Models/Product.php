@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model {
   use HasFactory;
 
-  protected $fillable = ['content'];
-  protected $hidden = ['updated_at'];
-  protected $appends = ['current_price'];
+  public function cartItems() {
+    return $this->hasMany(CartItem::class);
+  }
 
-  public function getCurrentPriceAttribute() {
-    return $this->price * 3;
+  public function orderItems() {
+    return $this->hasMany(OrderItem::class);
   }
 }
