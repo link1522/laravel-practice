@@ -24,6 +24,14 @@ class Cart extends Model {
   }
 
   public function checkout() {
+    foreach ($this->cartItems as $cartItem) {
+      $product = $cartItem->product;
+
+      if (!$product->checkQuantity($cartItem->quantity)) {
+        return response($product->title . '數量不足', 400);
+      }
+    }
+
     $order = $this->order()->create([
       'user_id' => $this->user_id
     ]);
@@ -36,6 +44,10 @@ class Cart extends Model {
       $order->orderItems()->create([
         'product_id' => $cartItem->product_id,
         'price' => $cartItem->product->price * $this->rate
+      ]);
+
+      $cartItem->product->update([
+        'quantity' => $cartItem->product->quantity - $cartItem->quantity
       ]);
     }
 

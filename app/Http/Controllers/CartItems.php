@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Product;
 
 class CartItems extends Controller {
   /**
@@ -52,10 +53,15 @@ class CartItems extends Controller {
     //   'quantity' => $validatedData['quantity']
     // ]);
 
+    $product = Product::find($validatedData['product_id']);
+    if (!$product->checkQuantity($validatedData['quantity'])) {
+      return response($product->title . '數量不足', 400);
+    }
+
     // create cart item
     $result = CartItem::create([
       'cart_id' => (int) $validatedData['cart_id'],
-      'product_id' => (int) $validatedData['product_id'],
+      'product_id' => (int) $product->id,
       'quantity' => (int) $validatedData['quantity']
     ]);
 
